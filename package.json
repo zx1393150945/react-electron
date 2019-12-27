@@ -2,19 +2,29 @@
   "name": "react-electron",
   "version": "0.1.0",
   "private": true,
+  "main": "main.js",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "bootstrap": "^4.4.1",
+    "concurrently": "^5.0.2",
+    "cross-env": "^6.0.3",
+    "devtron": "^1.4.0",
+    "electron": "^7.1.7",
+    "electron-is-dev": "^1.1.0",
+    "nodemon": "^2.0.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0"
+    "react-scripts": "3.3.0",
+    "wait-on": "^3.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "ele": "concurrently   \"chcp 65001\"  \"wait-on http://localhost:3000 && nodemon --watch . --exec  electron .  \"  \"cross-env BROWSER=none yarn start\""
   },
   "eslintConfig": {
     "extends": "react-app"
