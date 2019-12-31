@@ -8,12 +8,12 @@ export const FileSearch = ({title, onFileSearch}) => {
     const [inputActive, setInputActive] = useState(false)
     const [value, setValue] = useState('')
     const input = useRef(null)
-
-    const closeSearch = e => {
-        e.preventDefault()
+    // console.log("keyPress", keyPress)
+    const closeSearch = () => {
         setInputActive(false)
         setValue('')
     }
+    // console.log("render")
     useEffect(() => {
         const handleInputEvent = e => {
             const {keyCode} = e
