@@ -37,7 +37,7 @@ export const FileSearch = ({title, onFileSearch}) => {
     // A && B  返回值 如果A是false,返回A 否则返回 B , 也就是哪个是假返回哪个
     //   <> </> 在页面上是不会有什么节点的
     return (
-        <div className={"alert alert-primary d-flex justify-content-between align-items-center"}>
+        <div className={"alert alert-primary d-flex justify-content-between align-items-center mb-0"}>
             {!inputActive &&
                 <>
                  <span>{title}</span>
