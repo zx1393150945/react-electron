@@ -998,6 +998,13 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.26"
 
+"@fortawesome/free-brands-svg-icons@^5.12.0":
+  version "5.12.0"
+  resolved "https://registry.npmjs.org/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-5.12.0.tgz#b0c78627f811ac030ee0ac88df376567cf74119d"
+  integrity sha512-50uCFzVUki3wfmFmrMNLFhOt8dP6YZ53zwR4dK9FR7Lwq1IVHXnSBb8MtGLe3urLJ2sA+CSu7Pc7s3i6/zLxmA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.26"
+
 "@fortawesome/free-solid-svg-icons@^5.12.0":
   version "5.12.0"
   resolved "https://registry.npm.taobao.org/@fortawesome/free-solid-svg-icons/download/@fortawesome/free-solid-svg-icons-5.12.0.tgz#8decac5844e60453cc0c7c51437d1461df053a35"
@@ -1399,10 +1406,22 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/codemirror@^0.0.76":
+  version "0.0.76"
+  resolved "https://registry.npmjs.org/@types/codemirror/-/codemirror-0.0.76.tgz#c52719878056a216bc05889b46a41d4eb1434423"
+  integrity sha512-k/hpUb+Ebyn9z63qM8IbsRiW0eYHZ+pi/1e2reGzBKAZJzkjWmNTXXqLLiNv5d9ekyxkajxRBr5Hu2WZq/nokw==
+  dependencies:
+    "@types/tern" "*"
+
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/@types/eslint-visitor-keys/download/@types/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
   integrity sha1-HuMNeVRMqE1o1LPNsK9PIFZj3S0=
+
+"@types/estree@*":
+  version "0.0.41"
+  resolved "https://registry.npmjs.org/@types/estree/-/estree-0.0.41.tgz#fd90754150b57432b72bf560530500597ff04421"
+  integrity sha512-rIAmXyJlqw4KEBO7+u9gxZZSQHaCNnIzYrnNmYVpgfJhxTqO0brCX0SYpqUTkVI5mwwUwzmtspLBGBKroMeynA==
 
 "@types/events@*":
   version "3.0.0"
@@ -1492,6 +1511,13 @@
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/@types/stack-utils/download/@types/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
   integrity sha1-CoUdO9lkmPolwzq3J47TvWXwbD4=
+
+"@types/tern@*":
+  version "0.23.3"
+  resolved "https://registry.npmjs.org/@types/tern/-/tern-0.23.3.tgz#4b54538f04a88c9ff79de1f6f94f575a7f339460"
+  integrity sha512-imDtS4TAoTcXk0g7u4kkWqedB3E4qpjXzCpD2LU5M5NAXHzCDsypyvXSaG7mM8DKYkCRa7tFp4tS/lp/Wo7Q3w==
+  dependencies:
+    "@types/estree" "*"
 
 "@types/testing-library__dom@*", "@types/testing-library__dom@^6.0.0":
   version "6.11.0"
@@ -2817,6 +2843,11 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
+classnames@^2.2.6:
+  version "2.2.6"
+  resolved "https://registry.npmjs.org/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
+  integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
+
 clean-css@4.2.x:
   version "4.2.1"
   resolved "https://registry.npm.taobao.org/clean-css/download/clean-css-4.2.1.tgz#2d411ef76b8569b6d0c84068dabe85b0aa5e5c17"
@@ -2921,6 +2952,18 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/code-point-at/download/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
+
+codemirror-spell-checker@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/codemirror-spell-checker/-/codemirror-spell-checker-1.1.2.tgz#1c660f9089483ccb5113b9ba9ca19c3f4993371e"
+  integrity sha1-HGYPkIlIPMtRE7m6nKGcP0mTNx4=
+  dependencies:
+    typo-js "*"
+
+codemirror@^5.48.4:
+  version "5.50.0"
+  resolved "https://registry.npmjs.org/codemirror/-/codemirror-5.50.0.tgz#aeacd18f225735b17cbab98908edace87fedcdab"
+  integrity sha512-32LAmGcBNhKtJP4WGgkcaCVQDyChAyaWA6jasg778ziZzo3PWBuhpAQIJMO8//Id45RoaLyXjuhcRUBoS8Vg+Q==
 
 collection-visit@^1.0.0:
   version "1.0.0"
@@ -3892,6 +3935,15 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     inherits "^2.0.1"
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
+
+easymde@^2.7.1-202.0:
+  version "2.8.0"
+  resolved "https://registry.npmjs.org/easymde/-/easymde-2.8.0.tgz#a2f5e2618f23f4eaef3aee50056b6172dc6ead7e"
+  integrity sha512-ci0c31shzLYO9OzTcCveEr5MMghO3f+BIa58HjEJf7nYMAQxNl4gCQSk2A8+k2jTsBYln2wSF/+4lSjkvgHQww==
+  dependencies:
+    codemirror "^5.48.4"
+    codemirror-spell-checker "1.1.2"
+    marked "^0.7.0"
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
@@ -6901,6 +6953,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+marked@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.npmjs.org/marked/-/marked-0.7.0.tgz#b64201f051d271b1edc10a04d1ae9b74bb8e5c0e"
+  integrity sha512-c+yYdCZJQrsRjTPhUx7VKkApw9bwDkNbHUKo1ovgcfDjb2kc8rLuRbIFyXL5WOEUwzSSKo3IXpph2K6DqB/KZg==
+
 matcher@^2.0.0:
   version "2.1.0"
   resolved "https://registry.npm.taobao.org/matcher/download/matcher-2.1.0.tgz#64e1041c15b993e23b786f93320a7474bf833c28"
@@ -9092,6 +9149,14 @@ react-scripts@3.3.0:
   optionalDependencies:
     fsevents "2.1.2"
 
+react-simplemde-editor@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.npmjs.org/react-simplemde-editor/-/react-simplemde-editor-4.1.0.tgz#dfa7e889ac305c672aadb5ba4598deb788ae0e40"
+  integrity sha512-et7SGkhTMOu112Y95HQGVnEVQHfjS43TlD+JtVrkLvsr6g6cQsJtmpz0mNTOggtYxoo+zNEmseDr+7gVsj3svA==
+  dependencies:
+    "@types/codemirror" "^0.0.76"
+    easymde "^2.7.1-202.0"
+
 react@^16.12.0:
   version "16.12.0"
   resolved "https://registry.npm.taobao.org/react/download/react-16.12.0.tgz?cache=0&sync_timestamp=1576681172403&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact%2Fdownload%2Freact-16.12.0.tgz#0c0a9c6a142429e3614834d5a778e18aa78a0b83"
@@ -10675,6 +10740,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.npm.taobao.org/typedarray/download/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typo-js@*:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/typo-js/-/typo-js-1.1.0.tgz#a5a9f592bcb453666bf70c9694da58705d025ed8"
+  integrity sha512-W3kLbx+ML9PBl5Bzso/lTvVxk4BCveSNAtQeht59FEtxCdGThmn6wSHA4Xq3eQYAK24NHdisMM4JmsK0GFy/pg==
 
 uglify-js@3.4.x:
   version "3.4.10"
