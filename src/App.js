@@ -11,6 +11,7 @@ import {TabList} from './components/tab-list/tab-list'
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import classNames from 'classnames'
+import uuidv4 from 'uuid/v4'
 
 function App() {
     const [files, setFiles] = useState(defaultFiles)
@@ -67,6 +68,7 @@ function App() {
         const newFiles = files.map(file => {
             if ( file.id === id) {
                 file.title = title
+                file.isNew = false
             }
             return file
         })
@@ -77,6 +79,14 @@ function App() {
         const newFiles = files.filter(file => file.title.includes(keyword))
         setSearchFiles(newFiles)
     }
+    const createNewFile = () => {
+        const id = uuidv4()
+        const newFiles = [
+            ...files,
+            {id, title: '', body: '## 请输出markdown', createAt: new Date().getTime(), isNew: true}
+        ]
+        setFiles(newFiles)
+    }
     const fileArr = (searchFiles.length > 0) ?  searchFiles : files
   return (
     <div className="App container-fluid px-0">
@@ -86,7 +96,7 @@ function App() {
              <FileList files={fileArr} onFileClick={fileClick} onFileDelete={deleteFile} onSaveEdit={updateFileName}/>
              <div className={"row no-gutters button-group"}>
                  <div className={"col"}>
-                     <BottomButton icon={faPlus} colorClass={"btn-primary"} text={"新建"}/>
+                     <BottomButton icon={faPlus} onClick={createNewFile} colorClass={"btn-primary"} text={"新建"}/>
                  </div>
                  <div className={"col"}>
                      <BottomButton icon={faFileImport} colorClass={"btn-success"} text={"导入"}/>
