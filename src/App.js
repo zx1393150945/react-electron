@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.less';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -10,19 +10,81 @@ import {faPlus, faFileImport} from "@fortawesome/free-solid-svg-icons"
 import {TabList} from './components/tab-list/tab-list'
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
+import classNames from 'classnames'
 
 function App() {
-
+    const [files, setFiles] = useState(defaultFiles)
+    const [activeId, setActiveId] = useState('')
+    const [openedFileIds, setOpenedFIleIds] = useState([])
+    const [unsavedIds, setUnsavedIds] = useState([])
+    const openedFiles = openedFileIds.map(id => files.find(file => file.id === id))
+    const activeFile = files.find(file => file.id === activeId)
+    const [searchFiles, setSearchFiles] = useState([])
     const handleChange = value => {
-        console.log(value)
+        const newFiles = files.map(file => {
+            if (file.id === activeId ) file.body = value
+            return file
+        })
+        setFiles(newFiles)
+        if (!unsavedIds.includes(activeId)) {
+            setUnsavedIds([...unsavedIds, activeId])
+        }
     }
+    const fileClick = id => {
+        setActiveId(id)
+        if(!openedFileIds.includes(id)) {
+            setOpenedFIleIds([...openedFileIds, id])
+        }
+    }
+    const leftClass = classNames({
+        "col-3": true,
+        "left-panel": true,
+        hasShadow: !!activeFile
+    })
+    const tabClick = (id) => {
+        setActiveId(id)
+    }
+
+    const tabClose = (id) => {
+        let  ids = [...openedFileIds]
+        ids.splice(openedFileIds.indexOf(id),1)
+        setOpenedFIleIds(ids)
+        if (activeId === id) {
+            if(ids.length > 0) {
+                setActiveId(ids[ids.length-1])
+            } else {
+                setActiveId('')
+            }
+        }
+    }
+    const deleteFile = id => {
+       const newFiles = files.filter(file => file.id !== id)
+        setFiles(newFiles)
+        tabClose(id)
+    }
+
+    const updateFileName = (id, title) => {
+        const newFiles = files.map(file => {
+            if ( file.id === id) {
+                file.title = title
+            }
+            return file
+        })
+        setFiles(newFiles)
+    }
+
+    const fileSearch = keyword => {
+        const newFiles = files.filter(file => file.title.includes(keyword))
+        setSearchFiles(newFiles)
+    }
+    const fileArr = (searchFiles.length > 0) ?  searchFiles : files
   return (
     <div className="App container-fluid px-0">
       <div className={"row main no-gutters"}>
-         <div className={"col-3  left-panel"}>
-             <FileSearch title={"我的云文档"} onFileSearch={value => {console.log(value)}}/>
-             <FileList files={defaultFiles} onFileClick={() => {}} onFileDelete={() => {}} onSaveEdit={(id, value) => {console.log(id, value)}}/>
-             <div className={"row no-gutters"}>
+         <div className={leftClass}>
+             <FileSearch title={"我的云文档"} onFileSearch={fileSearch}/>
+             <FileList files={fileArr} onFileClick={fileClick} onFileDelete={deleteFile} onSaveEdit={updateFileName}/>
+             <div className={"row no-gutters button-group"}>
                  <div className={"col"}>
                      <BottomButton icon={faPlus} colorClass={"btn-primary"} text={"新建"}/>
                  </div>
@@ -32,13 +94,26 @@ function App() {
              </div>
 
          </div>
-         <div className={"col-9  right-panel"} >
-             <TabList files={defaultFiles}  activeId={"1"} unsavedIds={['1']} onTabClick={(id) => {console.log(id)}} onCloseTab={id => {console.log("closing:"+ id)}}/>
-             <SimpleMDE onChange={handleChange} value={defaultFiles[0].body}
-                        options={{
-                            autofocus: true,
-                            minHeight: '690px'
-                        }}/>
+         <div className={"col-9 right-panel"} >
+             {
+                 activeFile ? (
+                     <>
+                         <TabList files={openedFiles}  activeId={activeId} unsavedIds={unsavedIds} onTabClick={tabClick} onCloseTab={tabClose}/>
+                         <SimpleMDE onChange={handleChange} value={activeFile ? activeFile.body : null}
+                             key={activeFile.id}
+                             options={{
+                             autofocus: true,
+                             minHeight: '690px'
+                         }}/>
+                     </>
+                 ) : (
+                     <div className={"start-page"}>
+                        选择或创建新的文档
+                     </div>
+                 )
+             }
+
+
          </div>
       </div>
     </div>
