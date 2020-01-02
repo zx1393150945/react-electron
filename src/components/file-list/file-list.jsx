@@ -22,9 +22,10 @@ export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
             const {keyCode} = e
             if (keyCode === 13 && editStatus && value.trim() !== '') {
                 onSaveEdit(editStatus, value)
-                closeSearch()
+                setEditStatus(false)
+                setValue('')
             } else if (keyCode === 27 && editStatus){
-                closeSearch(e)
+                closeSearch()
             }
         }
         document.addEventListener("keyup", handleInputEvent)
