@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faTimes} from '@fortawesome/free-solid-svg-icons'
 import './tab-list.less'
 export const TabList = ({files, activeId, unsavedIds, onTabClick, onCloseTab}) => {
+    // console.log(files)
   return (
       <ul className={"nav nav-pills tab-list"}>
           {files.map(file =>{

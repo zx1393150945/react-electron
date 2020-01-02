@@ -14,6 +14,6 @@ export const BottomButton = ({text, colorClass, icon, onClick}) => {
 BottomButton.propTypes = {
     text: PropTypes.string,
     colorClass:  PropTypes.string,
-    icon: PropTypes.element.isRequired,
+    icon: PropTypes.object.isRequired,
     onClick: PropTypes.func
 }
