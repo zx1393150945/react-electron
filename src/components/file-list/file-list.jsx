@@ -21,7 +21,8 @@ export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
         const handleInputEvent = e => {
             const {keyCode} = e
             if (keyCode === 13 && editStatus && value.trim() !== '') {
-                onSaveEdit(editStatus, value)
+                const file = files.find(file => file.id === editStatus)
+                onSaveEdit(editStatus, value, file.isNew)
                 setEditStatus(false)
                 setValue('')
             } else if (keyCode === 27 && editStatus){
