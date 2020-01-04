@@ -16,7 +16,7 @@ function createWindow () {
             nodeIntegration: true,
         },
     })
-
+    mainWindow.openDevTools()
     // and load the index.html of the app.
     const url = isDev ? 'http://localhost:3000' : 'zxx'
     mainWindow.loadURL(url)
