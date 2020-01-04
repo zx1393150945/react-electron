@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faEdit, faTrash, faTimes} from '@fortawesome/free-solid-svg-icons'
 import { faMarkdown} from '@fortawesome/free-brands-svg-icons'
 import './file-lisr.less'
-
+import {useContextMenu} from '../../hook/useContextMenu'
+import {getParentNode} from '../../util/helper'
 export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
     const [editStatus, setEditStatus] = useState(false)
     const [value, setValue] = useState('')
@@ -17,6 +18,36 @@ export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
         setEditStatus(false)
         setValue('')
     }
+    let clickElement  = useContextMenu([
+        {
+            label: '打开',
+            click: (item, window, e ) => {
+                const parentNode = getParentNode(clickElement.current, 'file-item')
+                if (parentNode) {
+                    onFileClick(parentNode.dataset.id)
+                }
+            }
+        },
+        {
+            label: '重命名',
+            click: (e) => {
+                const parentNode = getParentNode(clickElement.current, 'file-item')
+                if (parentNode) {
+                    setEditStatus(parentNode.dataset.id);
+                    setValue(parentNode.dataset.title)
+                }
+            }
+        },
+        {
+            label: '删除',
+            click: (e) => {
+                const parentNode = getParentNode(clickElement.current, 'file-item')
+                if (parentNode) {
+                    onFileDelete(parentNode.dataset.id);
+                }
+            }
+        }
+    ], '.file-list', [files])
     useEffect(() => {
         const handleInputEvent = e => {
             const {keyCode} = e
@@ -52,7 +83,7 @@ export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
                 files.map(file =>
                     {
                        return (file.id !== editStatus && !file.isNew) ? (
-                        <li className={"list-group-item bg-light  file-item"} key={file.id}>
+                        <li className={"list-group-item bg-light  file-item"} key={file.id} data-id={file.id} data-title={file.title}>
                             <div className={"row"}>
                             <span className={"col-2"}>
                                 <FontAwesomeIcon icon={faMarkdown} title={"markdown"} size={"lg"} />
