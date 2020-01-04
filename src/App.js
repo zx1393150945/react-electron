@@ -14,10 +14,11 @@ import classNames from 'classnames'
 import uuidv4 from 'uuid/v4'
 import {flattenArr, objToarr} from './util/helper'
 import {fileHelper} from './util/fileHelper'
+import useIpcRenderer from './hook/useIpcRenderer'
 const {join, basename, extname, dirname} = window.require('path')
-const {remote} = window.require('electron')
+const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store');
-const store = new Store();
+const store = new Store()
 function App() {
     const [files, setFiles] = useState(store.get("files") || {})
     const [activeId, setActiveId] = useState('')
@@ -29,6 +30,7 @@ function App() {
     const [searchFiles, setSearchFiles] = useState([])
     const saveLocation = remote.app.getPath('documents')
     const handleChange = value => {
+        if (value === files[activeId].body) return
         const newFile = {...files[activeId], body: value }
         setFiles({...files, [activeId]: newFile })
         if (!unsavedIds.includes(activeId)) {
@@ -137,6 +139,12 @@ function App() {
         },{})
         store.set("files", fileStoreObj)
     }
+
+
+    const clearFiles = () => {
+        store.clear()
+        setFiles({})
+    }
     const importFile = () => {
         remote.dialog.showOpenDialog({
             title:'请选择文件',
@@ -175,6 +183,12 @@ function App() {
             }
         })
     }
+    useIpcRenderer({
+        'create-new-file': createNewFile,
+        'import-file': importFile,
+        'save-edit-file': saveCurrentFile,
+        'clear-file': clearFiles
+    })
     const fileArr = (searchFiles.length > 0) ?  searchFiles : objToarr(files)
   return (
     <div className="App container-fluid px-0">
@@ -203,8 +217,6 @@ function App() {
                              autofocus: true,
                              minHeight: '690px'
                          }}/>
-                         <BottomButton icon={faSave} onClick={saveCurrentFile} colorClass={"btn-info"} text={"保存"}/>
-                         <BottomButton icon={faSave} onClick={() => {store.clear(); setFiles({})}} colorClass={"btn-info"} text={"清除"}/>
                      </>
                  ) : (
                      <div className={"start-page"}>

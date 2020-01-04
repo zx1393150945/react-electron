@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
+import useIpcRenderer from '../../hook/useIpcRenderer'
 import './file-search.less'
 
 export const FileSearch = ({title, onFileSearch}) => {
@@ -37,6 +38,12 @@ export const FileSearch = ({title, onFileSearch}) => {
     }, [inputActive])
     // A && B  返回值 如果A是false,返回A 否则返回 B , 也就是哪个是假返回哪个
     //   <> </> 在页面上是不会有什么节点的
+    const searchFile = () => {
+        setInputActive(true)
+    }
+    useIpcRenderer({
+        'search-file': searchFile
+    })
     return (
         <div className={"alert alert-primary d-flex justify-content-between align-items-center mb-0"}>
             {!inputActive &&
@@ -44,7 +51,7 @@ export const FileSearch = ({title, onFileSearch}) => {
                  <span>{title}</span>
                   <button type={"button"}
                           className={"icon-button"}
-                          onClick={() => setInputActive(true)}
+                          onClick={searchFile}
                   >
                       <FontAwesomeIcon icon={faSearch} title={"搜索"} size={"lg"}/>
                   </button>

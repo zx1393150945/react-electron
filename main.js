@@ -1,7 +1,8 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu} = require('electron')
 const isDev = require('electron-is-dev')
 const path = require('path')
+const menuTemplate = require('./src/util/menuTemplate')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -15,6 +16,7 @@ function createWindow () {
         webPreferences: {
             nodeIntegration: true,
         },
+        // autoHideMenuBar: true
     })
     mainWindow.openDevTools()
     // and load the index.html of the app.
@@ -23,6 +25,8 @@ function createWindow () {
     mainWindow.on('closed', function () {
         mainWindow = null
     })
+    const menu = Menu.buildFromTemplate(menuTemplate)
+    Menu.setApplicationMenu(menu)
 }
 
 app.on('ready', async () => {
