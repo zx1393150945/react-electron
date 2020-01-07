@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 
 module.exports = [
     {
@@ -36,7 +36,16 @@ module.exports = [
                 label: '清空列表',
                 accelerator: 'Shift+CmdOrCtrl+C',
                 click: (menuItem, browserWindow, event) => {
+                    // 主进程向渲染进程发送事件
                     browserWindow.webContents.send('clear-file')
+                 }
+            },
+            {
+                label: '设置',
+                accelerator: 'CmdOrCtrl+,',
+                click: (menuItem, browserWindow, event) => {
+                    // 主进程向主进程发送事件
+                    ipcMain.emit('open-settings')
                  }
             },
         ]

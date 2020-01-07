@@ -1,4 +1,5 @@
 const fs = window.require("fs").promises
+const  fs2 = window.require("fs")
 const path = window.require("path");
 export const fileHelper = {
     readFile (path) {
@@ -12,6 +13,9 @@ export const fileHelper = {
     },
     deleteFile (path) {
        return fs.unlink(path)
+    },
+    checkFile (path) {
+        return fs2.existsSync(path)
     }
 }
 

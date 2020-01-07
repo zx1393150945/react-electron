@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './App.less';
 import 'bootstrap/dist/css/bootstrap.min.css'
-
 import {FileSearch} from './components/file-search/file-search'
 import {FileList} from './components/file-list/file-list'
 import {defaultFiles} from './util/default-files'
@@ -12,7 +11,7 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import classNames from 'classnames'
 import uuidv4 from 'uuid/v4'
-import {flattenArr, objToarr} from './util/helper'
+import {flattenArr, objToarr, getStoreFiles} from './util/helper'
 import {fileHelper} from './util/fileHelper'
 import useIpcRenderer from './hook/useIpcRenderer'
 const {join, basename, extname, dirname} = window.require('path')
@@ -20,7 +19,7 @@ const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store');
 const store = new Store()
 function App() {
-    const [files, setFiles] = useState(store.get("files") || {})
+    const [files, setFiles] = useState(getStoreFiles() || {})
     const [activeId, setActiveId] = useState('')
     const [openedFileIds, setOpenedFIleIds] = useState([])
     const [unsavedIds, setUnsavedIds] = useState([])
@@ -28,7 +27,8 @@ function App() {
     const activeFile = activeId === '' ? null : files[activeId]
 
     const [searchFiles, setSearchFiles] = useState([])
-    const saveLocation = remote.app.getPath('documents')
+    const settings = store.get('settings') || {}
+    const saveLocation = settings.saveLocation || remote.app.getPath('documents')
     const handleChange = value => {
         if (value === files[activeId].body) return
         const newFile = {...files[activeId], body: value }
