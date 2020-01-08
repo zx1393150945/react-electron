@@ -35,6 +35,12 @@ function createWindow () {
 
     const menu = Menu.buildFromTemplate(menuTemplate)
     Menu.setApplicationMenu(menu)
+    ipcMain.on('qiniu-enabled', (event, arg) => {
+       let cloudMenu =  menu.items[3];
+        [0,1,2].forEach(key => {
+           cloudMenu.submenu.items[key].enabled = arg
+       })
+    })
 }
 
 app.on('ready', async () => {

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 // 这里必须用 bundle ，不能直接用js,会报错
 import 'bootstrap/dist/js/bootstrap.bundle.min'
-const {remote} = window.require('electron')
+const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store')
 const store = new Store()
 
@@ -47,6 +47,9 @@ export const Settings = () => {
             secretKey,
             bucket
         })
+        //发送消息给主进程，让原始菜单生效
+        const qiniuEnabled = !!accessKey &&  !!secretKey && !!bucket
+        ipcRenderer.send("qiniu-enabled", qiniuEnabled)
         // remote.getCurrentWindow().close()
         remote.dialog.showMessageBoxSync({
             type: 'info',
@@ -88,19 +91,19 @@ export const Settings = () => {
                         <div className="form-group row ">
                             <label htmlFor="" className="col-3 col-form-label text-right">Access Key</label>
                             <div className="col-9 ">
-                                    <input type="text" value={accessKey} required className="form-control" placeholder="Access Key" onChange={e => {setAccessKey(e.target.value)}}/>
+                                    <input type="text" value={accessKey} className="form-control" placeholder="Access Key" onChange={e => {setAccessKey(e.target.value)}}/>
                             </div>
                         </div>
                         <div className="form-group row ">
                             <label htmlFor="" className="col-3 col-form-label text-right">Secret Key</label>
                             <div className="col-9 ">
-                                    <input type="text" value={secretKey} required className="form-control" placeholder="Secret Key" onChange={e => {setSecretKey(e.target.value)}}/>
+                                    <input type="text" value={secretKey}  className="form-control" placeholder="Secret Key" onChange={e => {setSecretKey(e.target.value)}}/>
                             </div>
                         </div>
                         <div className="form-group row ">
                             <label htmlFor="" className="col-3 col-form-label text-right">Bucket</label>
                             <div className="col-9 ">
-                                    <input type="text" value={bucket}  required className="form-control" placeholder="Bucket" onChange={e => {setBucket(e.target.value)}}/>
+                                    <input type="text" value={bucket}   className="form-control" placeholder="Bucket" onChange={e => {setBucket(e.target.value)}}/>
                             </div>
                         </div>
                         <div className="text-center mt-5">

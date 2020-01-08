@@ -1,5 +1,9 @@
-const {app, BrowserWindow, ipcMain} = require('electron')
-
+const {ipcMain} = require('electron')
+const Store = require('electron-store')
+const store = new Store()
+const {accessKey, secretKey, bucket} = store.get('settings')
+const autoSync = store.get('autoSync')
+const qiniuEnabled = !!accessKey &&  !!secretKey && !!bucket
 module.exports = [
     {
         label: '文件',
@@ -102,6 +106,34 @@ module.exports = [
                 label: '开发者工具',
                 accelerator: 'Ctrl+Shift+I',
                 role: 'toggledevtools'
+            }
+        ]
+    },
+    {
+        label: '云同步',
+        submenu: [
+            {
+                label: '自动同步',
+                type: 'checkbox',
+                enabled: qiniuEnabled,
+                checked: autoSync,
+                click: (menuItem, browserWindow, event) => {
+                    store.set("autoSync", !autoSync)
+                }
+            },
+            {
+                label: '全部同步至云端',
+                enabled : qiniuEnabled,
+                click: (menuItem, browserWindow, event) => {
+
+                }
+            },
+            {
+                label: '从云端下载至本地',
+                enabled: qiniuEnabled,
+                click: (menuItem, browserWindow, event) => {
+
+                }
             }
         ]
     },
