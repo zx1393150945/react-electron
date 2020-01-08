@@ -1,7 +1,7 @@
 const {ipcMain} = require('electron')
 const Store = require('electron-store')
 const store = new Store()
-const {accessKey, secretKey, bucket} = store.get('settings')
+const {accessKey, secretKey, bucket} = store.get('settings') || {}
 const autoSync = store.get('autoSync')
 const qiniuEnabled = !!accessKey &&  !!secretKey && !!bucket
 module.exports = [
@@ -116,7 +116,7 @@ module.exports = [
                 label: '自动同步',
                 type: 'checkbox',
                 enabled: qiniuEnabled,
-                checked: autoSync,
+                checked: !!autoSync,
                 click: (menuItem, browserWindow, event) => {
                     store.set("autoSync", !autoSync)
                 }

@@ -38,3 +38,8 @@ export const getStoreFiles = () => {
     }
     return storeFiles
 }
+
+export const formatTime = (time) => {
+  const date = new Date(time)
+    return date.toLocaleDateString() + ' '+ date.toLocaleTimeString()
+}

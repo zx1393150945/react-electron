@@ -5,13 +5,13 @@ import {FileSearch} from './components/file-search/file-search'
 import {FileList} from './components/file-list/file-list'
 import {defaultFiles} from './util/default-files'
 import {BottomButton} from './components/bottom-btn/bottom-btn'
-import {faPlus, faFileImport, faSave} from "@fortawesome/free-solid-svg-icons"
+import {faPlus, faFileImport} from "@fortawesome/free-solid-svg-icons"
 import {TabList} from './components/tab-list/tab-list'
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import classNames from 'classnames'
 import uuidv4 from 'uuid/v4'
-import {flattenArr, objToarr, getStoreFiles} from './util/helper'
+import {flattenArr, objToarr, getStoreFiles, formatTime} from './util/helper'
 import {fileHelper} from './util/fileHelper'
 import useIpcRenderer from './hook/useIpcRenderer'
 const {join, basename, extname, dirname} = window.require('path')
@@ -38,7 +38,6 @@ function App() {
         }
     }
     const fileClick =  id => {
-        setActiveId(id)
         if(!openedFileIds.includes(id)) {
             setOpenedFIleIds([...openedFileIds, id])
         }
@@ -47,7 +46,10 @@ function App() {
             fileHelper.readFile(files[id].path).then((data) => {
                 const newFile = {...files[id], body: data, isLoaded: true}
                 setFiles({...files, [id] : newFile })
+                setActiveId(id)
             })
+        }else {
+            setActiveId(id)
         }
 
     }
@@ -129,12 +131,25 @@ function App() {
             }
             setFiles(newFiles)
             setUnsavedIds(unsavedIds.filter(id => id !== activeId))
+            uploadCloud()
+
         })
+    }
+
+    const uploadCloud = () => {
+        // 同步云
+        const {accessKey, secretKey, bucket} = store.get('settings') || {}
+        const autoSync = store.get('autoSync')
+        const needUpload = !!accessKey && !!secretKey && !!bucket && !!autoSync
+        if (needUpload) {
+            const {title, path} = activeFile
+            ipcRenderer.send('upload-file', `${title}.md`, path)
+        }
     }
     const saveFilesToStore = files => {
         const fileStoreObj = objToarr(files).reduce((pre, file) => {
-            const {id , title, createAt, path} = file
-            pre[id] = {id, title, createAt, path}
+            const {id , title, createAt, path, isSynced, updatedAt} = file
+            pre[id] = {id, title, createAt, path, isSynced, updatedAt}
             return pre
         },{})
         store.set("files", fileStoreObj)
@@ -183,11 +198,19 @@ function App() {
             }
         })
     }
+    const uploadSuccess = () => {
+        const {id} = activeFile
+        const newFile = {...files[id], isSynced: true, updatedAt: new Date().getTime()}
+        const newfiles = {...files, [id]: newFile}
+        setFiles(newfiles)
+        saveFilesToStore(newfiles)
+    }
     useIpcRenderer({
         'create-new-file': createNewFile,
         'import-file': importFile,
         'save-edit-file': saveCurrentFile,
-        'clear-file': clearFiles
+        'clear-file': clearFiles,
+        'upload-success': uploadSuccess
     })
     const fileArr = (searchFiles.length > 0) ?  searchFiles : objToarr(files)
   return (
@@ -211,12 +234,15 @@ function App() {
                  activeFile ? (
                      <>
                          <TabList files={openedFiles}  activeId={activeId} unsavedIds={unsavedIds} onTabClick={tabClick} onCloseTab={tabClose}/>
-                         <SimpleMDE onChange={handleChange} value={activeFile ? activeFile.body : null}
+                         <SimpleMDE onChange={handleChange} value={activeFile.body}
                              key={activeFile.id}
                              options={{
                              autofocus: true,
                              minHeight: '690px'
                          }}/>
+                         {activeFile.isSynced && (
+                             <span className={'sync-status'}>已同步，上次同步时间 {formatTime(activeFile.updatedAt)}</span>
+                         )}
                      </>
                  ) : (
                      <div className={"start-page"}>

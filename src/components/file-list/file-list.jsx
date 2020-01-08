@@ -6,6 +6,7 @@ import { faMarkdown} from '@fortawesome/free-brands-svg-icons'
 import './file-lisr.less'
 import {useContextMenu} from '../../hook/useContextMenu'
 import {getParentNode} from '../../util/helper'
+const {remote} = window.require('electron')
 export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
     const [editStatus, setEditStatus] = useState(false)
     const [value, setValue] = useState('')
@@ -46,6 +47,22 @@ export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
                     onFileDelete(parentNode.dataset.id);
                 }
             }
+        },
+        {
+            label: '打开文件夹',
+            click: (e) => {
+                const parentNode = getParentNode(clickElement.current, 'file-item')
+                if (parentNode) {
+                    remote.dialog.showOpenDialog({
+                        title: parentNode.dataset.title+".md",
+                        properties: ['openFile'],
+                        defaultPath: parentNode.dataset.path,
+                        filters: [
+                            { name: 'Markdown Files', extensions: ['md'] },
+                        ]
+                    })
+                }
+            }
         }
     ], '.file-list', [files])
     useEffect(() => {
@@ -83,7 +100,7 @@ export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
                 files.map(file =>
                     {
                        return (file.id !== editStatus && !file.isNew) ? (
-                        <li className={"list-group-item bg-light  file-item"} key={file.id} data-id={file.id} data-title={file.title}>
+                        <li className={"list-group-item bg-light  file-item"} key={file.id} data-id={file.id} data-title={file.title} data-path={file.path}>
                             <div className={"row"}>
                             <span className={"col-2"}>
                                 <FontAwesomeIcon icon={faMarkdown} title={"markdown"} size={"lg"} />
