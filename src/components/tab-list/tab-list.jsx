@@ -7,7 +7,7 @@ import './tab-list.less'
 export const TabList = ({files, activeId, unsavedIds, onTabClick, onCloseTab}) => {
   return (
       <ul className={"nav nav-pills tab-list"}>
-          {files.map(file =>{
+          { files.map(file =>{
               const withUnsaveMark = unsavedIds.includes(file.id)
               const fclassname = classNames({
                   'nav-link ': true,
