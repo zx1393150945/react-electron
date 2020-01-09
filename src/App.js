@@ -14,6 +14,7 @@ import uuidv4 from 'uuid/v4'
 import {flattenArr, objToarr, getStoreFiles, formatTime} from './util/helper'
 import {fileHelper} from './util/fileHelper'
 import useIpcRenderer from './hook/useIpcRenderer'
+import {Loader} from './components/loader/loader'
 const {join, basename, extname, dirname} = window.require('path')
 const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store');
@@ -27,6 +28,7 @@ function App() {
     const activeFile = activeId === '' ? null : files[activeId]
 
     const [searchFiles, setSearchFiles] = useState([])
+    const [showLoader, setShowLoader] = useState(false)
     const settings = store.get('settings') || {}
     const saveLocation = settings.saveLocation || remote.app.getPath('documents')
     const handleChange = value => {
@@ -230,6 +232,17 @@ function App() {
         })
 
     }
+    const loading = (event, status) => {
+        setShowLoader(status)
+    }
+    const uploadAllSuccess = () => {
+        const newFiles = objToarr(files).reduce((pre, file) => {
+            pre[file.id] = {...file, isSynced: true, updatedAt: new Date().getTime()}
+            return pre
+        }, {})
+        setFiles(newFiles)
+        saveFilesToStore(newFiles)
+    }
     console.log("activeFile", activeFile)
     console.log("activeId", activeId)
     useIpcRenderer({
@@ -238,11 +251,14 @@ function App() {
         'save-edit-file': saveCurrentFile,
         'clear-file': clearFiles,
         'upload-success': uploadSuccess,
-        'file-downloaded': fileDownloaded
+        'file-downloaded': fileDownloaded,
+        'loading': loading,
+        'upload-all-success': uploadAllSuccess
     })
     const fileArr = (searchFiles.length > 0) ?  searchFiles : objToarr(files)
     return (
         <div className="App container-fluid px-0">
+           {showLoader && <Loader/>}
             <div className={"row main no-gutters"}>
                 <div className={leftClass}>
                     <FileSearch title={"我的云文档"} onFileSearch={fileSearch}/>

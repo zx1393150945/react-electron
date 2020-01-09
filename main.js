@@ -60,6 +60,30 @@ function createWindow () {
             dialog.showErrorBox("上传失败", "请检查七牛云配置")
         })
     })
+    ipcMain.on('upload-all', (event) => {
+        mainWindow.webContents.send("loading", true)
+        const files = store.get("files")
+        const qiniuHelper = getQiniuHelper()
+        const promiseArr = Object.keys(files).map(key => {
+            const {title, path} = files[key]
+            return  qiniuHelper.uploadFile(`${title}.md`, path)
+        })
+
+        Promise.all(promiseArr).then(result => {
+            console.log("result", result)
+            dialog.showMessageBox({
+                type: 'info',
+                title: '上传成功',
+                message: `成功上传了${result.length}个文件`
+            })
+            mainWindow.webContents.send("upload-all-success", false)
+        }).catch(err => {
+            console.log("err", err)
+            dialog.showErrorBox("上传失败", "请检查七牛云配置")
+        }).finally(() => {
+            mainWindow.webContents.send("loading", false)
+        })
+    })
     ipcMain.on('download-file', (event, ...arg) => {
         const qiniuHelper = getQiniuHelper()
         qiniuHelper.getStat(arg[0]).then(data => {
@@ -70,7 +94,6 @@ function createWindow () {
             if (serverUpdateTime > updatedAt || !updatedAt) {
                 qiniuHelper.downloadFile(arg[0], dirname(arg[1])).then(data => {
                     console.log("下载成功", data)
-                    console.log("data1", data)
                     mainWindow.webContents.send('file-downloaded', arg[3])
                 }).catch(err => {
                     console.log("下载失败", err)

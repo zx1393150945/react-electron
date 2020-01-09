@@ -125,7 +125,7 @@ module.exports = [
                 label: '全部同步至云端',
                 enabled : qiniuEnabled,
                 click: (menuItem, browserWindow, event) => {
-
+                    ipcMain.emit('upload-all')
                 }
             },
             {
