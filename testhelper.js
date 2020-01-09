@@ -3,19 +3,19 @@ const QiniuHelper = require('./src/util/qiniuHelper')
 var accessKey = 'IMqposS-uOf2aAkR5JXp_iIEIpgD7_FrrHhTX3SQ'
 var secretKey = 'Oaxt5qTMCJcp-9yNfi-M5HWynYOzh62AVvUidR1U'
 var bucket = 'zx-test-2020'
-var localFile = "C:\\Users\\Administrator\\Desktop\\hhh.md";
+var localFile = "D:\\Documents\\nnn.md";
 // 上传之后的文件名
-var key='zx.md'
+var key='nnn.md'
 const qiniuHelper = new QiniuHelper(accessKey, secretKey, bucket)
 
-qiniuHelper.downloadFile('zx2.md', 'C:\\Users\\Administrator\\Desktop').catch(err=> {
+/*qiniuHelper.downloadFile('nnn.md', 'D:\\Documents').catch(err=> {
     console.log(err)
-})
-/* qiniuHelper.uploadFile(key, localFile).then(data => {
+})*/
+ qiniuHelper.uploadFile(key, localFile).then(data => {
      console.log("data", data)
  }).catch(err => {
      console.log("err", err)
- })*/
+ })
 
 /*async function f() {
     const result = await qiniuHelper.uploadFile(key, localFile)

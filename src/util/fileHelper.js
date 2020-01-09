@@ -3,7 +3,7 @@ const  fs2 = window.require("fs")
 const path = window.require("path");
 export const fileHelper = {
     readFile (path) {
-       return fs.readFile(path, {encoding: 'utf-8'})
+        return fs.readFile(path, {encoding: 'utf-8'})
     },
     writeFile (path, content) {
        return fs.writeFile(path, content, {encoding: 'utf-8'})

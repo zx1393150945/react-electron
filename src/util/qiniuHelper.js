@@ -52,6 +52,12 @@ class QiniuHelper {
         }
 
     }
+    getStat(key) {
+        return new Promise((resolve, reject) => {
+            this.bucketManager.stat(this.bucket, key, this.handleCallBack(resolve, reject));
+        })
+
+    }
      async downloadFile(key, saveLocation) {
         const url =  await this.generateDownloadLink(key)
         const timestamp = new Date().getTime()

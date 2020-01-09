@@ -38,18 +38,29 @@ function App() {
         }
     }
     const fileClick =  id => {
+        setActiveId(id)
         if(!openedFileIds.includes(id)) {
             setOpenedFIleIds([...openedFileIds, id])
         }
         const activeFile = files[id]
-        if (!activeFile.isLoaded) {
-            fileHelper.readFile(files[id].path).then((data) => {
-                const newFile = {...files[id], body: data, isLoaded: true}
-                setFiles({...files, [id] : newFile })
-                setActiveId(id)
-            })
-        }else {
-            setActiveId(id)
+        const {path, title, isLoaded, updatedAt} = activeFile
+        if (!isLoaded) {
+            if(getAutoSync()) {
+                ipcRenderer.send('download-file', `${title}.md`, path, updatedAt, id)
+            }else {
+                const path = files[id].path
+                fileHelper.readFile(path).then(data => {
+                    const newFile = {...files[id], body: data, isLoaded: true}
+                    const newFiles = {...files, [id] : newFile }
+                    setFiles(newFiles)
+                    saveFilesToStore(newFiles)
+                }).catch(err => {
+                    console.log("读取文件出错...")
+                })
+            }
+
+        } else {
+
         }
 
     }
@@ -64,11 +75,11 @@ function App() {
 
     const tabClose = (id) => {
         let  ids = [...openedFileIds]
-        ids.splice(openedFileIds.indexOf(id),1)
-        setOpenedFIleIds(ids)
+        const newIds = ids.filter(_id => _id !== id  )
+        setOpenedFIleIds(newIds)
         if (activeId === id) {
-            if(ids.length > 0) {
-                setActiveId(ids[ids.length-1])
+            if(newIds.length > 0) {
+                setActiveId(newIds[ids.length-1])
             } else {
                 setActiveId('')
             }
@@ -80,8 +91,8 @@ function App() {
             const newFiles = {...files}
             delete newFiles[id]
             // 或者
-           //  const {[id] : value, ...afterDelete} = files
-           //  setFiles(afterDelete)
+            //  const {[id] : value, ...afterDelete} = files
+            //  setFiles(afterDelete)
             setFiles(newFiles)
             return
         }
@@ -136,11 +147,14 @@ function App() {
         })
     }
 
-    const uploadCloud = () => {
-        // 同步云
+    const getAutoSync = () => {
         const {accessKey, secretKey, bucket} = store.get('settings') || {}
         const autoSync = store.get('autoSync')
-        const needUpload = !!accessKey && !!secretKey && !!bucket && !!autoSync
+        return  !!accessKey && !!secretKey && !!bucket && !!autoSync
+    }
+
+    const uploadCloud = () => {
+        const needUpload = getAutoSync()
         if (needUpload) {
             const {title, path} = activeFile
             ipcRenderer.send('upload-file', `${title}.md`, path)
@@ -157,8 +171,9 @@ function App() {
 
 
     const clearFiles = () => {
-        store.clear()
+        store.delete("files")
         setFiles({})
+        setOpenedFIleIds([])
     }
     const importFile = () => {
         remote.dialog.showOpenDialog({
@@ -171,7 +186,7 @@ function App() {
         }).then( sfiles => {
             if (!sfiles.canceled) {
                 // 过滤掉已经存在的文件
-               const filterPaths =  sfiles.filePaths.filter(path => {
+                const filterPaths =  sfiles.filePaths.filter(path => {
                     const isAlreadyAdded = Object.values(files).find(file => file.path === path)
                     return !isAlreadyAdded
                 })
@@ -205,57 +220,73 @@ function App() {
         setFiles(newfiles)
         saveFilesToStore(newfiles)
     }
+    const fileDownloaded = (event, id) => {
+        console.log("file-downloaded", id)
+        fileHelper.readFile(files[id].path).then((data) => {
+            const newFile = {...files[id], body: data, isLoaded: true, isSynced: true, updatedAt: new Date().getTime()}
+            const newFiles = {...files, [id] : newFile }
+            setFiles(newFiles)
+            saveFilesToStore(newFiles)
+        })
+
+    }
+    console.log("activeFile", activeFile)
+    console.log("activeId", activeId)
     useIpcRenderer({
         'create-new-file': createNewFile,
         'import-file': importFile,
         'save-edit-file': saveCurrentFile,
         'clear-file': clearFiles,
-        'upload-success': uploadSuccess
+        'upload-success': uploadSuccess,
+        'file-downloaded': fileDownloaded
     })
     const fileArr = (searchFiles.length > 0) ?  searchFiles : objToarr(files)
-  return (
-    <div className="App container-fluid px-0">
-      <div className={"row main no-gutters"}>
-         <div className={leftClass}>
-             <FileSearch title={"我的云文档"} onFileSearch={fileSearch}/>
-             <FileList files={fileArr} onFileClick={fileClick} onFileDelete={deleteFile} onSaveEdit={updateFileName}/>
-             <div className={"row no-gutters button-group"}>
-                 <div className={"col"}>
-                     <BottomButton icon={faPlus} onClick={createNewFile} colorClass={"btn-primary"} text={"新建"}/>
-                 </div>
-                 <div className={"col"}>
-                     <BottomButton icon={faFileImport} onClick={importFile} colorClass={"btn-success"} text={"导入"}/>
-                 </div>
-             </div>
+    return (
+        <div className="App container-fluid px-0">
+            <div className={"row main no-gutters"}>
+                <div className={leftClass}>
+                    <FileSearch title={"我的云文档"} onFileSearch={fileSearch}/>
+                    <FileList files={fileArr} onFileClick={fileClick} onFileDelete={deleteFile} onSaveEdit={updateFileName}/>
+                    <div className={"row no-gutters button-group"}>
+                        <div className={"col"}>
+                            <BottomButton icon={faPlus} onClick={createNewFile} colorClass={"btn-primary"} text={"新建"}/>
+                        </div>
+                        <div className={"col"}>
+                            <BottomButton icon={faFileImport} onClick={importFile} colorClass={"btn-success"} text={"导入"}/>
+                        </div>
+                    </div>
 
-         </div>
-         <div className={"col-9 right-panel"} >
-             {
-                 activeFile ? (
-                     <>
-                         <TabList files={openedFiles}  activeId={activeId} unsavedIds={unsavedIds} onTabClick={tabClick} onCloseTab={tabClose}/>
-                         <SimpleMDE onChange={handleChange} value={activeFile.body}
-                             key={activeFile.id}
-                             options={{
-                             autofocus: true,
-                             minHeight: '690px'
-                         }}/>
-                         {activeFile.isSynced && (
-                             <span className={'sync-status'}>已同步，上次同步时间 {formatTime(activeFile.updatedAt)}</span>
-                         )}
-                     </>
-                 ) : (
-                     <div className={"start-page"}>
-                        选择或创建新的文档
-                     </div>
-                 )
-             }
+                </div>
+                <div className={"col-9 right-panel"} >
+                    {
+                        activeFile ? (
+                            <>
+                                <TabList files={openedFiles}  activeId={activeId} unsavedIds={unsavedIds} onTabClick={tabClick} onCloseTab={tabClose}/>
+                                <SimpleMDE onChange={handleChange} value={activeFile.body}
+                                           key={activeFile.id}
+                                           options={{
+                                               autofocus: true,
+                                               minHeight: '690px'
+                                           }}/>
+                                {activeFile.isSynced && (
+                                    <span className={'sync-status'}>已同步，上次同步时间 {formatTime(activeFile.updatedAt)}</span>
+                                )}
+                            </>
+                        ) : (
+                            <div className={"start-page"}>
+                                选择或创建新的文档
+                            </div>
+                        )
+                    }
 
 
-         </div>
-      </div>
-    </div>
-  )
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default App
+
+
+

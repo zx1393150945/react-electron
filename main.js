@@ -2,6 +2,7 @@
 const {app, BrowserWindow, Menu, ipcMain, dialog} = require('electron')
 const isDev = require('electron-is-dev')
 const path = require('path')
+const {join, basename, extname, dirname} = path
 const menuTemplate = require('./src/util/menuTemplate')
 const AppWindow = require('./AppWindow')
 const QiniuHelper = require('./src/util/qiniuHelper')
@@ -58,6 +59,31 @@ function createWindow () {
             console.log("上传失败", err)
             dialog.showErrorBox("上传失败", "请检查七牛云配置")
         })
+    })
+    ipcMain.on('download-file', (event, ...arg) => {
+        const qiniuHelper = getQiniuHelper()
+        qiniuHelper.getStat(arg[0]).then(data => {
+            // console.log("data0", data)
+            const serverUpdateTime = Math.round(data.putTime / 10000)
+            const updatedAt = arg[2]
+            // console.log("===", serverUpdateTime, updatedAt)
+            if (serverUpdateTime > updatedAt || !updatedAt) {
+                qiniuHelper.downloadFile(arg[0], dirname(arg[1])).then(data => {
+                    console.log("下载成功", data)
+                    console.log("data1", data)
+                    mainWindow.webContents.send('file-downloaded', arg[3])
+                }).catch(err => {
+                    console.log("下载失败", err)
+                    dialog.showErrorBox("下载失败", "请检查七牛云配置")
+                })
+            }else {
+                mainWindow.webContents.send('file-downloaded', arg[3])
+            }
+        }).catch(err => {
+            console.log("文件没有找到", err)
+            dialog.showErrorBox("下载失败", "文件不存在")
+        })
+
     })
 }
 
