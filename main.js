@@ -16,7 +16,7 @@ let mainWindow, settingsWindow
 
 function createWindow () {
     // Create the browser window.
-    const url = isDev ? 'http://localhost:3000' : 'zxx'
+    const url = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, './build/index.html')}`
     const getQiniuHelper = () => {
         const {accessKey, secretKey, bucket} = store.get('settings') || {}
         return  new QiniuHelper(accessKey, secretKey, bucket)
