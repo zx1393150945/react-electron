@@ -65,7 +65,17 @@
       "./src/util/menuTemplate.js",
       "./AppWindow.js",
       "./src/util/qiniuHelper.js"
-    ]
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
   },
   "eslintConfig": {
     "extends": "react-app"

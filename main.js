@@ -25,7 +25,7 @@ function createWindow () {
         width: 1200,
         height: 900,
     }, url)
-    mainWindow.openDevTools()
+    // mainWindow.openDevTools()
     // and load the index.html of the app.
     mainWindow.on('closed', function () {
         mainWindow = null
