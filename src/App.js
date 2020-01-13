@@ -98,6 +98,7 @@ function App({history}) {
             //  const {[id] : value, ...afterDelete} = files
             //  setFiles(afterDelete)
             setFiles(newFiles)
+            setHasNewFile(false)
             return
         }
         fileHelper.deleteFile(join(saveLocation, `${currentFile.title}.md`)).then(() => {
@@ -110,6 +111,15 @@ function App({history}) {
 
     const updateFileName = (id, title, isNew) => {
         const newPath = isNew ? join(saveLocation, `${title}.md`) : join(dirname(files[id].path), `${title}.md`)
+        const oldFile = Object.values(files).find(file => file.path === newPath)
+        if (oldFile) {
+            remote.dialog.showMessageBox({
+                type: 'info',
+                title: '文件已存在',
+                message: `已存在相同路径下的文件名`,
+            })
+            return
+        }
         const newFile = {...files[id], title: title, isNew: false, path: newPath }
         const newFiles = {...files, [id]: newFile }
         if (isNew) {
@@ -131,6 +141,7 @@ function App({history}) {
         setSearchFiles(newFiles)
     }
     const createNewFile = () => {
+        console.log("hasNewFile", hasNewFile)
         if (hasNewFile) return
         const id = uuidv4()
         const newFile = {id, title: '', body: '## 请输出markdown', createAt: new Date().getTime(), isNew: true}
@@ -273,8 +284,8 @@ function App({history}) {
            {showLoader && <Loader/>}
             <div className={"row main no-gutters"}>
                 <div className={leftClass}>
-                    <FileSearch title={"我的云文档"} onFileSearch={fileSearch} setSearching={setSearching}/>
-                    <FileList files={fileArr} onFileClick={fileClick} onFileDelete={deleteFile} onSaveEdit={updateFileName}/>
+                    <FileSearch title={"我的云文档"} onFileSearch={fileSearch}  setSearching={setSearching}/>
+                    <FileList files={fileArr} onFileClick={fileClick} onFileDelete={deleteFile} onSaveEdit={updateFileName} setHasNewFile={setHasNewFile} />
                     <div className={"row no-gutters button-group"}>
                         <div className={"col"}>
                             <BottomButton icon={faPlus} onClick={createNewFile} colorClass={"btn-primary"} text={"新建"}/>

@@ -7,13 +7,13 @@ import './file-lisr.less'
 import {useContextMenu} from '../../hook/useContextMenu'
 import {getParentNode} from '../../util/helper'
 const {remote} = window.require('electron')
-export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
+export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete, setHasNewFile}) => {
     const [editStatus, setEditStatus] = useState(false)
     const [value, setValue] = useState('')
     const input = useRef(null)
     const closeSearch = () => {
         const file = files.find(file => file.id === editStatus)
-        if(file.isNew) {
+        if(file && file.isNew) {
             onFileDelete(file.id)
         }
         setEditStatus(false)
@@ -73,8 +73,10 @@ export  const FileList = ({files, onFileClick, onSaveEdit, onFileDelete}) => {
                 onSaveEdit(editStatus, value, file.isNew)
                 setEditStatus(false)
                 setValue('')
+                setHasNewFile(false)
             } else if (keyCode === 27 && editStatus){
                 closeSearch()
+                setHasNewFile(false)
             }
         }
         document.addEventListener("keyup", handleInputEvent)
