@@ -26,7 +26,7 @@
     "prepack": "yarn build && yarn buildMain",
     "predist": "yarn build && yarn buildMain ",
     "buildMain": "webpack",
-    "release": "cross-env GH_TOKEN=4623f2258d67391988717be96325f0909003c843 electron-builder ",
+    "release": "cross-env GH_TOKEN=0abe555abe3f26eac85c08a7da2501a65f545a87 electron-builder ",
     "prerelease": "yarn build && yarn buildMain"
   },
   "homepage": "./",
