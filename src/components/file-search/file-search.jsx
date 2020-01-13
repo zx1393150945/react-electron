@@ -5,7 +5,7 @@ import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import useIpcRenderer from '../../hook/useIpcRenderer'
 import './file-search.less'
 
-export const FileSearch = ({title, onFileSearch}) => {
+export const FileSearch = ({title, onFileSearch, setSearching}) => {
     const [inputActive, setInputActive] = useState(false)
     const [value, setValue] = useState('')
     const input = useRef(null)
@@ -13,24 +13,14 @@ export const FileSearch = ({title, onFileSearch}) => {
     const closeSearch = () => {
         setInputActive(false)
         setValue('')
-        onFileSearch('')
+        setSearching(false)
     }
-    // console.log("render")
-    useEffect(() => {
-        const handleInputEvent = e => {
-            const {keyCode} = e
-            if (keyCode === 13 && inputActive) {
-                onFileSearch(value)
-            } else if (keyCode === 27 && inputActive){
-                closeSearch(e)
-            }
-        }
-        document.addEventListener("keyup", handleInputEvent)
-        return () => {
-            document.removeEventListener("keyup", handleInputEvent)
-        }
-    })
-
+    const handleChange = e => {
+        const newValue = e.target.value
+        setValue(newValue)
+        onFileSearch(newValue)
+        setSearching(true)
+    }
     useEffect(() => {
        if (inputActive) {
            input.current.focus()
@@ -60,7 +50,7 @@ export const FileSearch = ({title, onFileSearch}) => {
             {
                 inputActive &&
                 <>
-                    <input ref={input} style={{height:'25px'}} type="text" className={"form-control"} value={value} id="" onChange={ e => setValue(e.target.value) }/>
+                    <input ref={input} style={{height:'25px'}} type="text" className={"form-control"} value={value} id="" onChange={handleChange}/>
                     <button type={"button"}
                             className={"icon-button"}
                             onClick={closeSearch}

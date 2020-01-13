@@ -111,7 +111,8 @@ function createWindow () {
             }
         }).catch(err => {
             console.log("文件没有找到", err)
-            dialog.showErrorBox("下载失败", "文件不存在")
+            mainWindow.webContents.send('file-downloaded', arg[3], 'not-found')
+            // dialog.showErrorBox("下载失败", "文件不存在")
         })
 
     })

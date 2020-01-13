@@ -24,6 +24,8 @@ function App({history}) {
     const [activeId, setActiveId] = useState('')
     const [openedFileIds, setOpenedFIleIds] = useState([])
     const [unsavedIds, setUnsavedIds] = useState([])
+    const [searching, setSearching] = useState(false)
+    const [hasNewFile, setHasNewFile] = useState(false)
     const openedFiles = openedFileIds.map(id => files[id])
     const activeFile = activeId === '' ? null : files[activeId]
 
@@ -114,6 +116,7 @@ function App({history}) {
             fileHelper.writeFile(newPath, files[id].body).then(() => {
                 setFiles(newFiles)
                 saveFilesToStore(newFiles)
+                setHasNewFile(false)
             })
         } else {
             fileHelper.renameFile(files[id].path,newPath).then(() => {
@@ -128,6 +131,7 @@ function App({history}) {
         setSearchFiles(newFiles)
     }
     const createNewFile = () => {
+        if (hasNewFile) return
         const id = uuidv4()
         const newFile = {id, title: '', body: '## 请输出markdown', createAt: new Date().getTime(), isNew: true}
         const newFiles = {
@@ -135,6 +139,7 @@ function App({history}) {
             [id]: newFile
         }
         setFiles(newFiles)
+        setHasNewFile(true)
     }
     const saveCurrentFile = () => {
         fileHelper.writeFile(activeFile.path, activeFile.body).then(() => {
@@ -222,10 +227,15 @@ function App({history}) {
         setFiles(newfiles)
         saveFilesToStore(newfiles)
     }
-    const fileDownloaded = (event, id) => {
+    const fileDownloaded = (event, id, msg) => {
         console.log("file-downloaded", id)
         fileHelper.readFile(files[id].path).then((data) => {
-            const newFile = {...files[id], body: data, isLoaded: true, isSynced: true, updatedAt: new Date().getTime()}
+            let newFile
+            if (msg === 'not-found') {
+                 newFile = {...files[id], body: data, isLoaded: true}
+            } else {
+                 newFile = {...files[id], body: data, isLoaded: true, isSynced: true, updatedAt: new Date().getTime()}
+            }
             const newFiles = {...files, [id] : newFile }
             setFiles(newFiles)
             saveFilesToStore(newFiles)
@@ -257,13 +267,13 @@ function App({history}) {
         'upload-all-success': uploadAllSuccess,
         'open-settings': openSettings
     })
-    const fileArr = (searchFiles.length > 0) ?  searchFiles : objToarr(files)
+    const fileArr = searching ?  searchFiles : objToarr(files)
     return (
         <div className="App container-fluid px-0">
            {showLoader && <Loader/>}
             <div className={"row main no-gutters"}>
                 <div className={leftClass}>
-                    <FileSearch title={"我的云文档"} onFileSearch={fileSearch}/>
+                    <FileSearch title={"我的云文档"} onFileSearch={fileSearch} setSearching={setSearching}/>
                     <FileList files={fileArr} onFileClick={fileClick} onFileDelete={deleteFile} onSaveEdit={updateFileName}/>
                     <div className={"row no-gutters button-group"}>
                         <div className={"col"}>
