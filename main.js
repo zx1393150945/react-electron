@@ -2,6 +2,7 @@
 const {app, Menu, ipcMain, dialog} = require('electron')
 const isDev = require('electron-is-dev')
 const path = require('path')
+const {autoUpdater} = require('electron-updater')
 const { dirname} = path
 const menuTemplate = require('./src/util/menuTemplate')
 const AppWindow = require('./AppWindow')
@@ -119,6 +120,30 @@ function createWindow () {
 app.on('ready', async () => {
     createWindow()
     require('devtron').install()
+    autoUpdater.autoDownload = false
+    autoUpdater.checkForUpdatesAndNotify()
+    autoUpdater.on("error", (err) => {
+        dialog.showErrorBox("更新失败", err)
+    })
+    autoUpdater.on("update-available", () => {
+        dialog.showMessageBox({
+            type: 'info',
+            title: '应用有新的版本',
+            message: `发现有新的版本，是否更新`,
+            buttons: ["是", "否"]
+        }, buttonIndex => {
+            if( buttonIndex === 0 ) {
+                autoUpdater.downloadUpdate()
+            }
+        })
+    })
+    autoUpdater.on("update-not-available", () => {
+        dialog.showMessageBox({
+            type: 'info',
+            title: '没有新的版本',
+            message: `当前已经是新的版本`,
+        })
+    })
 })
 
 
