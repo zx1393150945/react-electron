@@ -24,7 +24,9 @@
     "dist": "electron-builder",
     "prepack": "yarn build && yarn buildMain",
     "predist": "yarn build && yarn buildMain ",
-    "buildMain": "webpack"
+    "buildMain": "webpack",
+    "release": "cross-env GH_TOKEN=b0aaf93f94f6c0f61a295d3a92a9e57fc9dc483b electron-builder ",
+    "prerelease": "yarn build && yarn buildMain"
   },
   "homepage": "./",
   "build": {
@@ -49,7 +51,8 @@
           ]
         }
       ]
-    }
+    },
+    "publish": ["github"]
   },
   "eslintConfig": {
     "extends": "react-app"
