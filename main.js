@@ -77,7 +77,6 @@ function createWindow () {
         })
 
         Promise.all(promiseArr).then(result => {
-            console.log("result", result)
             dialog.showMessageBox({
                 type: 'info',
                 title: '上传成功',
@@ -115,6 +114,12 @@ function createWindow () {
             // dialog.showErrorBox("下载失败", "文件不存在")
         })
 
+    })
+    ipcMain.on('delete-file', (event, ...arg) => {
+        const qiniuHelper = getQiniuHelper()
+        qiniuHelper.getStat(arg[0]).then(data => {
+            qiniuHelper.deleteFile(arg[0])
+        })
     })
 }
 

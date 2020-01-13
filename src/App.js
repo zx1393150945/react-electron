@@ -101,11 +101,13 @@ function App({history}) {
             setHasNewFile(false)
             return
         }
-        fileHelper.deleteFile(join(saveLocation, `${currentFile.title}.md`)).then(() => {
+        const {title} = currentFile
+        fileHelper.deleteFile(join(saveLocation, `${title}.md`)).then(() => {
             delete files[id]
             store.set("files", files)
             setFiles(files)
             tabClose(id)
+            ipcRenderer.send('delete-file', `${title}.md`)
         })
     }
 
