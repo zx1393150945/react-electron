@@ -49,7 +49,8 @@ module.exports = [
                 accelerator: 'CmdOrCtrl+,',
                 click: (menuItem, browserWindow, event) => {
                     // 主进程向主进程发送事件
-                    ipcMain.emit('open-settings')
+                    browserWindow.webContents.send('open-settings')
+                    // ipcMain.emit('open-settings')
                  }
             },
         ]

@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
 // 这里必须用 bundle ，不能直接用js,会报错
 import 'bootstrap/dist/js/bootstrap.bundle.min'
+import {withRouter} from 'react-router-dom'
 const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store')
 const store = new Store()
 
-export const Settings = () => {
+ const Settings = ({history}) => {
     const settings = store.get('settings') || {}
     console.log("settings", settings)
     const [file, setFile] = useState(settings.saveLocation || '')
@@ -56,6 +57,10 @@ export const Settings = () => {
             title: "设置成功",
             message: '设置七牛云成功',
         })
+
+    }
+    const handleBack = () => {
+        history.replace('/')
     }
     return (
         <div className={"container-fluid"}>
@@ -83,6 +88,7 @@ export const Settings = () => {
                         </div>
                         <div className="text-center mt-5">
                             <button type="submit" className="btn btn-primary">保存</button>
+                            <button onClick={handleBack} className="btn btn-primary ml-5">返回</button>
                         </div>
                     </form>
                 </div>
@@ -108,6 +114,7 @@ export const Settings = () => {
                         </div>
                         <div className="text-center mt-5">
                             <button type="submit" className="btn btn-primary">保存</button>
+                            <button onClick={handleBack} className="btn btn-primary ml-5">返回</button>
                         </div>
                     </form>
                 </div>
@@ -116,3 +123,5 @@ export const Settings = () => {
         </div>
     )
 }
+
+export default withRouter(Settings)

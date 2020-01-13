@@ -19,7 +19,7 @@ const {join, basename, extname, dirname} = window.require('path')
 const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store');
 const store = new Store()
-function App() {
+function App({history}) {
     const [files, setFiles] = useState(getStoreFiles() || {})
     const [activeId, setActiveId] = useState('')
     const [openedFileIds, setOpenedFIleIds] = useState([])
@@ -243,8 +243,9 @@ function App() {
         setFiles(newFiles)
         saveFilesToStore(newFiles)
     }
-    console.log("activeFile", activeFile)
-    console.log("activeId", activeId)
+    const openSettings = () => {
+        history.replace('/settings')
+    }
     useIpcRenderer({
         'create-new-file': createNewFile,
         'import-file': importFile,
@@ -253,7 +254,8 @@ function App() {
         'upload-success': uploadSuccess,
         'file-downloaded': fileDownloaded,
         'loading': loading,
-        'upload-all-success': uploadAllSuccess
+        'upload-all-success': uploadAllSuccess,
+        'open-settings': openSettings
     })
     const fileArr = (searchFiles.length > 0) ?  searchFiles : objToarr(files)
     return (

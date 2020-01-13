@@ -1,8 +1,8 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu, ipcMain, dialog} = require('electron')
+const {app, Menu, ipcMain, dialog} = require('electron')
 const isDev = require('electron-is-dev')
 const path = require('path')
-const {join, basename, extname, dirname} = path
+const { dirname} = path
 const menuTemplate = require('./src/util/menuTemplate')
 const AppWindow = require('./AppWindow')
 const QiniuHelper = require('./src/util/qiniuHelper')
@@ -12,11 +12,11 @@ const store = new Store()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, settingsWindow
+let mainWindow
 
 function createWindow () {
     // Create the browser window.
-    const url = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, './build/index.html')}`
+    const url = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, './index.html')}`
     const getQiniuHelper = () => {
         const {accessKey, secretKey, bucket} = store.get('settings') || {}
         return  new QiniuHelper(accessKey, secretKey, bucket)
@@ -30,17 +30,23 @@ function createWindow () {
     mainWindow.on('closed', function () {
         mainWindow = null
     })
-    ipcMain.on('open-settings', () => {
+/*    ipcMain.on('open-settings', () => {
+        const settings_url = url.format({
+            pathname: path.join(__dirname, './build/index.html/#/settings'),
+            hash: 'baz',
+            protocol: 'file',
+            slashes: true,
+        })
         settingsWindow = new AppWindow({
             width: 600,
             height: 400,
             parent: mainWindow,
             autoHideMenuBar: true
-        }, 'http://localhost:3000/settings')
+        }, settings_url)
         settingsWindow.on('closed', function () {
             settingsWindow = null
         })
-    })
+    })*/
 
     const menu = Menu.buildFromTemplate(menuTemplate)
     Menu.setApplicationMenu(menu)
