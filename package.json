@@ -87,7 +87,7 @@
     "cross-env": "^6.0.3",
     "customize-cra": "^0.9.1",
     "devtron": "^1.4.0",
-    "electron": "^7.1.8",
+    "electron": "^11.5.0",
     "electron-builder": "^21.2.0",
     "jquery": "^3.4.1",
     "less": "^3.10.3",
